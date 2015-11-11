@@ -87,6 +87,7 @@
 %slurm_with_opt sgijob
 %endif
 
+
 Name:    slurm
 Version: 15.08.3
 Release: 1
@@ -102,8 +103,10 @@ URL: http://slurm.schedmd.com/
 Requires: slurm-plugins
 
 %ifos linux
+%if 0%{?suse_version} >= 1310 || 0%{?rhel} >= 7
 BuildRequires: systemd
 %{?systemd_requires}
+%endif
 BuildRequires: python
 BuildRequires: ncurses-devel
 BuildRequires: glib2-devel
@@ -128,15 +131,14 @@ BuildRequires: libdmtcpaware-devel
 BuildRequires: libjson-devel
         %endif
     %else
-BuildRequires: mariadb-devel
 BuildRequires: numactl-devel
     %endif
 %endif
 
 
-
-
 %define systemd_avail %{defined systemd_requires}
+
+
 %if %systemd_avail
 %if (! %{defined service_add_pre}) && %{defined systemd_pre}
     %define service_add_pre %{expand:%%{systemd_pre %*}}
@@ -539,7 +541,7 @@ DESTDIR="$RPM_BUILD_ROOT" %__make install-contrib
 
     install -D -m644 etc/slurm-ctld.conf   $RPM_BUILD_ROOT/%_tmpfilesdir/slurm-ctld.conf
     install -D -m644 etc/slurm-d.conf      $RPM_BUILD_ROOT/%_tmpfilesdir/slurm-d.conf
-    
+
     %if 0%{?suse_version}
         ln -s service $RPM_BUILD_ROOT/usr/sbin/rcslurmd
         ln -s service $RPM_BUILD_ROOT/usr/sbin/rcslurmctld
@@ -552,7 +554,7 @@ DESTDIR="$RPM_BUILD_ROOT" %__make install-contrib
       mkdir -p "$RPM_BUILD_ROOT/usr/sbin"
       ln -s ../../etc/init.d/slurm    $RPM_BUILD_ROOT/usr/sbin/rcslurm
       ln -s ../../etc/init.d/slurmdbd $RPM_BUILD_ROOT/usr/sbin/rcslurmdbd
-      
+
    fi
 %endif
 %endif
